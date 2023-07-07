@@ -2,7 +2,7 @@
 
 This is a simple Firefox extension that adds a `git fetch` command to
 GitHub pull request pages, making it easy to fetch and check out pull
-requests locally.
+requests locally without some nonsense `gh` utility, just plain ol' git.
 
 # Installation
 
