@@ -1,0 +1,13 @@
+{
+  "manifest_version": 2,
+  "name": "Github PR Fetch",
+  "version": "1.0",
+  "description": "Display git fetch URL and ref name for a Github pull request",
+  "permissions": ["activeTab", "https://github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*/*/pull/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
