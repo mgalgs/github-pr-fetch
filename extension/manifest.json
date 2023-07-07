@@ -3,6 +3,10 @@
     "name": "Github PR Fetch",
     "version": "1.0",
     "description": "Display git fetch URL and ref name for a Github pull request",
+    "icons": {
+        "48": "icons/icon-48.png",
+        "128": "icons/icon-128.png"
+    },
     "permissions": ["activeTab", "https://github.com/*"],
     "content_scripts": [{
         "matches": ["https://github.com/*/*/pull/*"],
