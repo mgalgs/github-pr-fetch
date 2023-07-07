@@ -20,3 +20,7 @@ follows:
 4. Open the `github-pr-fetch/extension` directory and select any file inside the directory.
 
 The extension should now be temporarily installed, and you'll see it listed in your add-ons.
+
+# Screencast
+
+https://github.com/mgalgs/github-pr-fetch/assets/152014/8977b97d-ba03-491d-b264-32ee17ced7ef
