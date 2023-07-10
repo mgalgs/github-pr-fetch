@@ -6,10 +6,12 @@ requests locally without some nonsense `gh` utility, just plain ol' git.
 
 # Installation
 
-TODO: Firefox add-ons store...
+Get it on the Mozilla addons store:
 
-You can install this temporarily in your current Firefox session as
-follows:
+https://addons.mozilla.org/en-US/firefox/addon/github-pr-fetch/
+
+Alternatively, you can install this temporarily in your current Firefox
+session from source as follows:
 
 1. Clone this repository: `git clone https://github.com/mgalgs/github-pr-fetch.git`
 
