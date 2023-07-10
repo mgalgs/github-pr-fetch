@@ -95,8 +95,7 @@ function insertGitFetchCommand(user, repo, prNum) {
     header.parentNode.insertBefore(parentDiv, header.nextSibling ? header.nextSibling.nextSibling : null);
 }
 
-// This function runs when the page loads.
-window.onload = function() {
+function handleOnLoad() {
     // Parse the URL to get the user, repo, and PR number.
     var urlParts = window.location.pathname.split('/');
     var user = urlParts[1];
@@ -104,4 +103,10 @@ window.onload = function() {
     var prNum = urlParts[4];
 
     insertGitFetchCommand(user, repo, prNum);
-};
+}
+
+if (document.readyState === "complete") {
+    handleOnLoad();
+} else {
+    window.onload = handleOnLoad;
+}
