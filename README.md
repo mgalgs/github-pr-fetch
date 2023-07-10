@@ -10,8 +10,14 @@ Get it on the Mozilla addons store:
 
 https://addons.mozilla.org/en-US/firefox/addon/github-pr-fetch/
 
-Alternatively, you can install this temporarily in your current Firefox
-session from source as follows:
+# Screencast
+
+https://github.com/mgalgs/github-pr-fetch/assets/152014/8977b97d-ba03-491d-b264-32ee17ced7ef
+
+# Development
+
+If you'd like to hack on the extension, you can install it temporarily in
+your current Firefox session from source as follows:
 
 1. Clone this repository: `git clone https://github.com/mgalgs/github-pr-fetch.git`
 
@@ -21,8 +27,5 @@ session from source as follows:
 
 4. Open the `github-pr-fetch/extension` directory and select any file inside the directory.
 
-The extension should now be temporarily installed, and you'll see it listed in your add-ons.
-
-# Screencast
-
-https://github.com/mgalgs/github-pr-fetch/assets/152014/8977b97d-ba03-491d-b264-32ee17ced7ef
+The extension should now be temporarily installed, and you'll see it listed
+in your add-ons. Make any changes you'd like and then click Reload.
