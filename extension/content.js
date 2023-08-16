@@ -2,23 +2,23 @@ function insertGitFetchCommand(user, repo, prNum) {
     let monospaceFonts = "ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace";
 
     // Create the parent div that contains the radio buttons and the fetch command.
-    var parentDiv = document.createElement("div");
+    const parentDiv = document.createElement("div");
     parentDiv.style.marginBottom = "10px";
 
-    var commandTypes = [
+    const commandTypes = [
         { name: "fetch", command: `git fetch https://github.com/${user}/${repo}.git +refs/pull/${prNum}/head` },
         { name: "fetch+checkout", command: `git fetch https://github.com/${user}/${repo}.git +refs/pull/${prNum}/head && git checkout FETCH_HEAD` },
         { name: "fetch+merge", command: `git fetch https://github.com/${user}/${repo}.git +refs/pull/${prNum}/head && git merge FETCH_HEAD` },
         { name: "fetch+cherry-pick", command: `git fetch https://github.com/${user}/${repo}.git +refs/pull/${prNum}/head && git cherry-pick FETCH_HEAD` },
     ];
 
-    var radiosDiv = document.createElement("div");
+    const radiosDiv = document.createElement("div");
     radiosDiv.style.display = "inline-flex";
     radiosDiv.style.justifyContent = "space-between";
     radiosDiv.style.marginBottom = "10px";
 
     commandTypes.forEach(function(type, index) {
-        var radio = document.createElement("input");
+        const radio = document.createElement("input");
         radio.type = "radio";
         radio.id = "commandType" + index;
         radio.name = "commandType";
@@ -26,8 +26,8 @@ function insertGitFetchCommand(user, repo, prNum) {
         radio.value = type.name;
         radio.checked = index === 0; // Select the first radio button by default.
 
-        var labelText = document.createTextNode(type.name);
-        var label = document.createElement("label");
+        const labelText = document.createTextNode(type.name);
+        const label = document.createElement("label");
         label.htmlFor = radio.id;
         label.style.marginRight = "10px";
         label.style.fontFamily = monospaceFonts;
@@ -37,11 +37,11 @@ function insertGitFetchCommand(user, repo, prNum) {
         radiosDiv.appendChild(label);
     });
 
-    var radiosRow = document.createElement("div");
+    const radiosRow = document.createElement("div");
     radiosRow.appendChild(radiosDiv);
     radiosRow.style.marginTop = "5px";
 
-    var fetchDiv = document.createElement("div");
+    const fetchDiv = document.createElement("div");
     fetchDiv.style.display = "inline-flex"; // Make the div only as wide as its content.
     fetchDiv.style.alignItems = "flex-start";
     fetchDiv.style.background = "#24292e"; // Dark grey
@@ -54,11 +54,11 @@ function insertGitFetchCommand(user, repo, prNum) {
     fetchDiv.style.cursor = "pointer";
     fetchDiv.title = "Click to copy";
 
-    var preElement = document.createElement("pre");
+    const preElement = document.createElement("pre");
     preElement.textContent = commandTypes[0].command;
     fetchDiv.appendChild(preElement);
 
-    var copiedText = document.createElement("span");
+    const copiedText = document.createElement("span");
     copiedText.style.visibility = "hidden";
     copiedText.style.fontFamily = monospaceFonts;
     copiedText.style.fontSize = "12px";
@@ -67,22 +67,22 @@ function insertGitFetchCommand(user, repo, prNum) {
     copiedText.textContent = "Copied!";
     fetchDiv.appendChild(copiedText);
 
-    var fetchRow = document.createElement("div");
+    const fetchRow = document.createElement("div");
     fetchRow.appendChild(fetchDiv);
 
     parentDiv.appendChild(fetchRow);
     parentDiv.appendChild(radiosRow);
 
     radiosDiv.addEventListener("change", function() {
-        var selectedType = document.querySelector('input[name="commandType"]:checked').value;
-        var selectedCommand = commandTypes.find(function(type) {
+        const selectedType = document.querySelector('input[name="commandType"]:checked').value;
+        const selectedCommand = commandTypes.find(function(type) {
             return type.name === selectedType;
         }).command;
         preElement.textContent = selectedCommand;
     });
 
     fetchDiv.addEventListener("click", function() {
-        var commandToCopy = preElement.textContent;
+        const commandToCopy = preElement.textContent;
         navigator.clipboard.writeText(commandToCopy);
         copiedText.style.visibility = "visible";
         setTimeout(function() {
@@ -91,16 +91,16 @@ function insertGitFetchCommand(user, repo, prNum) {
     });
 
     // Add the div to the page.
-    var header = document.getElementById("partial-discussion-header");
+    const header = document.getElementById("partial-discussion-header");
     header.parentNode.insertBefore(parentDiv, header.nextSibling ? header.nextSibling.nextSibling : null);
 }
 
 function handleOnLoad() {
     // Parse the URL to get the user, repo, and PR number.
-    var urlParts = window.location.pathname.split('/');
-    var user = urlParts[1];
-    var repo = urlParts[2];
-    var prNum = urlParts[4];
+    const urlParts = window.location.pathname.split('/');
+    const user = urlParts[1];
+    const repo = urlParts[2];
+    const prNum = urlParts[4];
 
     insertGitFetchCommand(user, repo, prNum);
 }
