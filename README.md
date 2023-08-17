@@ -12,7 +12,8 @@ https://addons.mozilla.org/en-US/firefox/addon/github-pr-fetch/
 
 # Screencast
 
-https://github.com/mgalgs/github-pr-fetch/assets/152014/8977b97d-ba03-491d-b264-32ee17ced7ef
+https://github.com/mgalgs/github-pr-fetch/assets/152014/d76391eb-2c71-4cd6-a166-2b0ebc74d3bb
+
 
 # Development
 
