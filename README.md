@@ -4,6 +4,9 @@ This is a simple Firefox extension that adds a `git fetch` command to
 GitHub pull request pages, making it easy to fetch and check out pull
 requests locally without some nonsense `gh` utility, just plain ol' git.
 
+This idea was borrowed from the Gerrit Code Review tool. Gerrit users using
+Github: rejoice!
+
 # Installation
 
 You can install this extension from the Firefox Browser Add-ons store:
