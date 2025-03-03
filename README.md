@@ -6,14 +6,13 @@ requests locally without some nonsense `gh` utility, just plain ol' git.
 
 # Installation
 
-Get it on the Mozilla addons store:
+You can install this extension from the Firefox Browser Add-ons store:
 
-https://addons.mozilla.org/en-US/firefox/addon/github-pr-fetch/
+[![Get the Add-on](get-the-addon-129x45px.8041c789.png)](https://addons.mozilla.org/en-US/firefox/addon/github-pr-fetch/)
 
 # Screencast
 
 https://github.com/mgalgs/github-pr-fetch/assets/152014/d76391eb-2c71-4cd6-a166-2b0ebc74d3bb
-
 
 # Development
 
