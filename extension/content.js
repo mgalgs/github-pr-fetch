@@ -3,93 +3,57 @@ let selectedTransportIdx = 0;
 let selectedCommandTypeIdx = 0;
 let parentDiv = null;
 
-function createRadios(configs, prefix, selectedIdx, onChange) {
-    prefix = `github-pr-fetch__${prefix}`;
-    const radiosDiv = document.createElement("div");
-    radiosDiv.style.display = "inline-flex";
-    radiosDiv.style.justifyContent = "space-between";
+function createSelect(configs, selectedIdx, onChange) {
+    const select = document.createElement("select");
+    select.style.fontFamily = MONOSPACEFONTS;
+    select.style.fontSize = "11px";
+    select.style.padding = "2px 4px";
+    select.style.borderRadius = "4px";
+    select.style.border = "1px solid #444";
+    select.style.background = "#2d333b";
+    select.style.color = "#ccc";
+    select.style.cursor = "pointer";
 
     configs.forEach(function(config, index) {
-        const radio = document.createElement("input");
-        radio.type = "radio";
-        radio.id = prefix + index;
-        radio.name = prefix;
-        radio.style.marginRight = "4px";
-        radio.value = config.name;
-        radio.checked = index === selectedIdx;
-
-        const labelText = document.createTextNode(config.name);
-        const label = document.createElement("label");
-        label.htmlFor = radio.id;
-        label.style.marginRight = "10px";
-        label.style.fontFamily = MONOSPACEFONTS;
-        label.style.fontSize = "12px";
-        label.appendChild(radio);
-        label.appendChild(labelText);
-        radiosDiv.appendChild(label);
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = config.name;
+        option.selected = index === selectedIdx;
+        select.appendChild(option);
     });
 
-    radiosDiv.addEventListener("change", function() {
-        const selectedName = document.querySelector(`input[name="${prefix}"]:checked`).value;
-        const selectedIdx = configs.findIndex(function(config) {
-            return config.name === selectedName;
-        });
-        const selectedConfig = configs[selectedIdx];
-        onChange(selectedConfig, selectedIdx);
+    select.addEventListener("change", function() {
+        onChange(parseInt(select.value));
     });
 
-    return radiosDiv;
+    return select;
 }
 
-// just to keep this crap out of our way
-const domBuilders = {
-    radiosLabel: () => {
-        const div = document.createElement("div");
-        div.style.fontFamily = MONOSPACEFONTS;
-        div.style.display = "inline-block";
-        div.style.fontSize = "smaller";
-        div.style.marginRight = "5px";
-        div.style.width = "100px";
-        div.style.textAlign = "right";
-        return div;
-    },
-    fetch: () => {
-        const fetchDiv = document.createElement("div");
-        fetchDiv.style.display = "inline-flex"; // Make the div only as wide as its content.
-        fetchDiv.style.alignItems = "flex-start";
-        fetchDiv.style.background = "#24292e"; // Dark grey
-        fetchDiv.style.color = "#ffffff"; // White
-        fetchDiv.style.padding = "10px";
-        fetchDiv.style.border = "1px solid #e1e4e8";
-        fetchDiv.style.borderRadius = "6px";
-        fetchDiv.style.fontFamily = MONOSPACEFONTS;
-        fetchDiv.style.fontSize = "12px";
-        fetchDiv.style.cursor = "pointer";
-        fetchDiv.title = "Click to copy";
-        return fetchDiv;
-    },
-    copied: () => {
-        const copiedText = document.createElement("span");
-        copiedText.style.visibility = "hidden";
-        copiedText.style.fontFamily = MONOSPACEFONTS;
-        copiedText.style.fontSize = "12px";
-        copiedText.style.marginLeft = "7px";
-        copiedText.style.color = "green";
-        copiedText.textContent = "Copied!";
-        return copiedText;
-    },
-};
+// Find the PR header element to insert our widget before.
+// We try several strategies to be resilient to GitHub DOM changes.
+function findPrHeader() {
+    // Legacy selector (worked until ~2025)
+    const legacy = document.getElementById("partial-discussion-header");
+    if (legacy) return legacy;
+
+    // New React-based GitHub UI: insert before the HeaderContent container.
+    const headerContent = document.querySelector('[class*="PageLayout-HeaderContent"]');
+    if (headerContent) return headerContent;
+
+    // Last resort: find an h1 containing "#NNNN"
+    const allH1s = document.querySelectorAll("h1");
+    for (const h1 of allH1s) {
+        if (h1.textContent.match(/#\d+/)) {
+            return h1;
+        }
+    }
+
+    return null;
+}
 
 function insertGitFetchCommand(user, repo, prNum) {
-    const preElement = document.createElement("pre");
-
     if (parentDiv)
         parentDiv.remove();
-
-    // Create the parent div that contains the radio buttons and the fetch
-    // command.
-    parentDiv = document.createElement("div");
-    parentDiv.style.marginBottom = "10px";
 
     const networkTransports = [
         { name: "ssh", label: "git@github.com:" },
@@ -106,69 +70,67 @@ function insertGitFetchCommand(user, repo, prNum) {
         { name: "fetch+cherry-pick", label: `git fetch ${transportPrefix}${user}/${repo}.git +refs/pull/${prNum}/head && git cherry-pick FETCH_HEAD` },
     ];
 
-    const commandTypesRadiosDiv = createRadios(
-        commandTypes,
-        "commandType",
-        selectedCommandTypeIdx,
-        (config, idx) => {
-            selectedCommandTypeIdx = idx;
-            insertGitFetchCommand(user, repo, prNum);
-        }
-    );
+    // Single-row container
+    parentDiv = document.createElement("div");
+    parentDiv.style.display = "flex";
+    parentDiv.style.alignItems = "center";
+    parentDiv.style.gap = "8px";
+    parentDiv.style.padding = "6px 10px";
+    parentDiv.style.margin = "4px 0";
+    parentDiv.style.background = "#24292e";
+    parentDiv.style.border = "1px solid #e1e4e8";
+    parentDiv.style.borderRadius = "6px";
+    parentDiv.style.fontFamily = MONOSPACEFONTS;
+    parentDiv.style.fontSize = "12px";
+    parentDiv.style.color = "#ffffff";
+    parentDiv.style.width = "fit-content";
 
-    const networkTransportsRadiosDiv = createRadios(
-        networkTransports,
-        "networkTransports",
-        selectedTransportIdx,
-        (config, idx) => {
-            selectedTransportIdx = idx;
-            insertGitFetchCommand(user, repo, prNum);
-        }
-    );
+    // Command text (clickable to copy)
+    const commandSpan = document.createElement("span");
+    commandSpan.textContent = commandTypes[selectedCommandTypeIdx].label;
+    commandSpan.style.cursor = "pointer";
+    commandSpan.style.whiteSpace = "nowrap";
+    commandSpan.title = "Click to copy";
 
-    const radiosRow1 = document.createElement("div");
-    const radiosRow1Label = domBuilders.radiosLabel();
-    radiosRow1Label.textContent = "command:";
-    radiosRow1.appendChild(radiosRow1Label);
-    radiosRow1.appendChild(commandTypesRadiosDiv);
+    // "Copied!" indicator
+    const copiedText = document.createElement("span");
+    copiedText.style.visibility = "hidden";
+    copiedText.style.fontSize = "11px";
+    copiedText.style.color = "green";
+    copiedText.textContent = "Copied!";
 
-    const radiosRow2 = document.createElement("div");
-    const radiosRow2Label = domBuilders.radiosLabel();
-    radiosRow2Label.textContent = "transport:";
-    radiosRow2.appendChild(radiosRow2Label);
-    radiosRow2.appendChild(networkTransportsRadiosDiv);
+    // Command type select
+    const cmdSelect = createSelect(commandTypes, selectedCommandTypeIdx, (idx) => {
+        selectedCommandTypeIdx = idx;
+        insertGitFetchCommand(user, repo, prNum);
+    });
 
-    const radiosRows = document.createElement("div");
-    radiosRows.appendChild(radiosRow1);
-    radiosRows.appendChild(radiosRow2);
-    radiosRows.style.marginTop = "5px";
+    // Transport select
+    const transportSelect = createSelect(networkTransports, selectedTransportIdx, (idx) => {
+        selectedTransportIdx = idx;
+        insertGitFetchCommand(user, repo, prNum);
+    });
 
-    const fetchDiv = domBuilders.fetch();
+    parentDiv.appendChild(commandSpan);
+    parentDiv.appendChild(copiedText);
+    parentDiv.appendChild(cmdSelect);
+    parentDiv.appendChild(transportSelect);
 
-    preElement.textContent = commandTypes[selectedCommandTypeIdx].label;
-    fetchDiv.appendChild(preElement);
-
-    const copiedText = domBuilders.copied();
-    fetchDiv.appendChild(copiedText);
-
-    const fetchRow = document.createElement("div");
-    fetchRow.appendChild(fetchDiv);
-
-    parentDiv.appendChild(fetchRow);
-    parentDiv.appendChild(radiosRows);
-
-    fetchDiv.addEventListener("click", function() {
-        const commandToCopy = preElement.textContent;
-        navigator.clipboard.writeText(commandToCopy);
+    commandSpan.addEventListener("click", function() {
+        navigator.clipboard.writeText(commandSpan.textContent);
         copiedText.style.visibility = "visible";
         setTimeout(function() {
             copiedText.style.visibility = "hidden";
-        }, 2000); // hide "Copied!" after 2 seconds
+        }, 2000);
     });
 
     // Add the div to the page.
-    const header = document.getElementById("partial-discussion-header");
-    header.parentNode.insertBefore(parentDiv, header.nextSibling ? header.nextSibling.nextSibling : null);
+    const anchor = findPrHeader();
+    if (!anchor) {
+        console.warn("github-pr-fetch: could not find PR header element");
+        return;
+    }
+    anchor.before(parentDiv);
 }
 
 function handleOnLoad() {
