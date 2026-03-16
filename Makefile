@@ -1,4 +1,4 @@
-# note to self, web-ext is installed in my v18.15.0 nvm environment
-# nvm use v18.15.0
+WEB_EXT ?= $(HOME)/.nvm/versions/node/v18.15.0/bin/web-ext
+
 build:
-	cd extension && web-ext build --overwrite-dest
+	cd extension && $(WEB_EXT) build --overwrite-dest
